@@ -1,0 +1,260 @@
+CREATE TABLE `accounts` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`user_id` integer NOT NULL,
+	`account_type` text NOT NULL,
+	`github_id` text,
+	`google_id` text,
+	`password` text,
+	`salt` text,
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `contact_me` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`user_id` integer NOT NULL,
+	`route_id` integer NOT NULL,
+	`route_name` text,
+	`intro_text` text,
+	`contact_email` text,
+	`email_template` text,
+	`created_at` integer DEFAULT CURRENT_TIMESTAMP,
+	`updated_at` integer DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`route_id`) REFERENCES `routes`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `donations` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`user_name` text NOT NULL,
+	`phone_no` text NOT NULL,
+	`email` text NOT NULL,
+	`created_at` integer DEFAULT CURRENT_TIMESTAMP,
+	`amount` integer NOT NULL,
+	`status` text NOT NULL,
+	`payment_id` text,
+	`payment_method` text NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE `education` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`level` text NOT NULL,
+	`custom_title` text,
+	`institution` text NOT NULL,
+	`location` text NOT NULL,
+	`degree` text,
+	`stream` text,
+	`custom_stream` text,
+	`board` text,
+	`status` text,
+	`start_year` integer,
+	`end_year` integer,
+	`year_of_completion` integer,
+	`score_type` text,
+	`score_value` integer,
+	`user_id` integer NOT NULL,
+	`route_id` integer NOT NULL,
+	`route_name` text,
+	`created_at` integer DEFAULT CURRENT_TIMESTAMP,
+	`updated_at` integer DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`route_id`) REFERENCES `routes`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `hero_section` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`title` text NOT NULL,
+	`tagline` text,
+	`user_id` integer NOT NULL,
+	`full_name` text NOT NULL,
+	`description` text NOT NULL,
+	`email` text NOT NULL,
+	`skills` text DEFAULT (json_array()),
+	`phone_number` text,
+	`linkedin` text,
+	`github` text,
+	`youtube` text,
+	`personal_links` text DEFAULT (json_array()),
+	`avatar_options` text DEFAULT (json_object()),
+	`route_id` integer NOT NULL,
+	`created_at` integer DEFAULT CURRENT_TIMESTAMP,
+	`updated_at` integer DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`route_id`) REFERENCES `routes`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `images` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`url` text NOT NULL,
+	`created_at` integer DEFAULT CURRENT_TIMESTAMP,
+	`route_id` integer NOT NULL,
+	`user_id` integer NOT NULL,
+	FOREIGN KEY (`route_id`) REFERENCES `routes`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `layout` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`user_id` integer NOT NULL,
+	`route_id` integer NOT NULL,
+	`hero_section_layout_style` text DEFAULT 'classic',
+	`project_layout_style` text DEFAULT 'grid',
+	`work_experience_layout_style` text DEFAULT 'cards',
+	`skills_layout_style` text DEFAULT 'compact',
+	`created_at` integer DEFAULT CURRENT_TIMESTAMP,
+	`updated_at` integer DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`route_id`) REFERENCES `routes`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `magic_links` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`email` text NOT NULL,
+	`token` text,
+	`token_expires_at` integer NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE `payments` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`user_id` integer NOT NULL,
+	`amount` integer NOT NULL,
+	`currency` text NOT NULL,
+	`status` text NOT NULL,
+	`payment_method` text NOT NULL,
+	`payment_id` text,
+	`user_phone_no` text,
+	`user_email` text,
+	`user_name` text,
+	`time_zone` text,
+	`created_at` integer DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `profile` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`user_id` integer NOT NULL,
+	`display_name` text,
+	`image_id` text,
+	`image` text,
+	`bio` text DEFAULT '' NOT NULL,
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `project_images` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`project_id` integer NOT NULL,
+	`user_id` integer NOT NULL,
+	`route_id` integer NOT NULL,
+	`url` text NOT NULL,
+	`created_at` integer DEFAULT CURRENT_TIMESTAMP,
+	`updated_at` integer DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`route_id`) REFERENCES `routes`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `projects` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`user_id` integer NOT NULL,
+	`route_id` integer NOT NULL,
+	`title` text NOT NULL,
+	`description` text NOT NULL,
+	`image_url` text,
+	`cloudinary_public_id` text,
+	`tags` text DEFAULT (json_array()) NOT NULL,
+	`live_link` text,
+	`code_link` text,
+	`created_at` integer DEFAULT CURRENT_TIMESTAMP,
+	`updated_at` integer DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`route_id`) REFERENCES `routes`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `reserved_routes` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`route_name` text NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE `reset_tokens` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`user_id` integer NOT NULL,
+	`token` text,
+	`token_expires_at` integer NOT NULL,
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `routes` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`route_name` text NOT NULL,
+	`user_id` integer NOT NULL,
+	`is_subdomain_active` integer DEFAULT false NOT NULL,
+	`created_at` integer DEFAULT CURRENT_TIMESTAMP,
+	`updated_at` integer DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `session` (
+	`id` text PRIMARY KEY NOT NULL,
+	`user_id` integer NOT NULL,
+	`expires_at` integer NOT NULL,
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `skills` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`skill_name` text NOT NULL,
+	`icon_name` text,
+	`year_of_experience` integer NOT NULL,
+	`level_of_proficiency` text NOT NULL,
+	`user_id` integer NOT NULL,
+	`route_id` integer NOT NULL,
+	`route_name` text,
+	`created_at` integer DEFAULT CURRENT_TIMESTAMP,
+	`updated_at` integer DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`route_id`) REFERENCES `routes`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `user` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`email` text,
+	`email_verified` integer,
+	`created_at` integer DEFAULT CURRENT_TIMESTAMP,
+	`user_type` text DEFAULT 'free',
+	`role` text DEFAULT 'user'
+);
+--> statement-breakpoint
+CREATE TABLE `verify_email_tokens` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`user_id` integer NOT NULL,
+	`token` text,
+	`token_expires_at` integer NOT NULL,
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `work_experiences` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`user_id` integer NOT NULL,
+	`route_id` integer NOT NULL,
+	`job_title` text NOT NULL,
+	`company_name` text NOT NULL,
+	`location` text NOT NULL,
+	`start_date` text NOT NULL,
+	`end_date` text,
+	`is_present` integer NOT NULL,
+	`job_description` text NOT NULL,
+	`created_at` integer DEFAULT CURRENT_TIMESTAMP,
+	`updated_at` integer DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`route_id`) REFERENCES `routes`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX `accounts_user_id_unique` ON `accounts` (`user_id`);--> statement-breakpoint
+CREATE UNIQUE INDEX `accounts_github_id_unique` ON `accounts` (`github_id`);--> statement-breakpoint
+CREATE UNIQUE INDEX `accounts_google_id_unique` ON `accounts` (`google_id`);--> statement-breakpoint
+CREATE UNIQUE INDEX `magic_links_email_unique` ON `magic_links` (`email`);--> statement-breakpoint
+CREATE UNIQUE INDEX `profile_user_id_unique` ON `profile` (`user_id`);--> statement-breakpoint
+CREATE UNIQUE INDEX `reserved_routes_route_name_unique` ON `reserved_routes` (`route_name`);--> statement-breakpoint
+CREATE UNIQUE INDEX `reset_tokens_user_id_unique` ON `reset_tokens` (`user_id`);--> statement-breakpoint
+CREATE UNIQUE INDEX `routes_route_name_unique` ON `routes` (`route_name`);--> statement-breakpoint
+CREATE UNIQUE INDEX `user_email_unique` ON `user` (`email`);--> statement-breakpoint
+CREATE UNIQUE INDEX `verify_email_tokens_user_id_unique` ON `verify_email_tokens` (`user_id`);
